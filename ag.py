@@ -16,7 +16,7 @@ Critérios
 2. Avaliar cada indivíduo da população.
 3. Enquanto critério de parada não for satisfeito faça
     3.1  Selecionar os indivíduos mais aptos.
-    3.2  Criar novos indivíduos aplicando os operadores 
+    3.2  Criar novos indivíduos aplicando os operadores
         crossover e mutação.
     3.3  Armazenar os novos indivíduos em umanova população.
     3.4 Avaliar cada indivíduo da nova população.
@@ -36,7 +36,7 @@ class Populacao:
         return [
             individuo(
                 ''.join(map(str, [randint(0,1) for _ in range(self.precisao)])) #Binario
-            ) for _ in range(self.qtdIndividuos) 
+            ) for _ in range(self.qtdIndividuos)
         ]
 
     def _normalizacao(self, cromossomo):
@@ -44,8 +44,17 @@ class Populacao:
         valorNormalizado = self.dominio[0] + (self.dominio[1] - self.dominio[0]) * (valor / (2 ** self.precisao - 1))
         return valorNormalizado
 
-    def _selecao(self):
+    def _crossover(self, selecionados):
         pass
+
+    def _selecao(self):
+        from random import choice
+
+        selecionados = []
+        while len(selecionados) ≤ 4:
+            desafiante1 = choice(self.indiviudos)
+            desafiante2 = choice(self.individuos)
+            selecionados.append(min(desafiante1, desafiante2))
 
     def avaliacao(self):
         for individuo in self.individuos:
@@ -53,7 +62,7 @@ class Populacao:
             individuo.fitness = self.fitnessFunc(valorNormalizado)
 
     def novaGeracao(self):
-        selecionados = None;
+        selecionados = self._selecao()
 
 
 class individuo:
@@ -82,8 +91,8 @@ def main():
     populacao = Populacao(4, [-10,10], fitness, 10)
     populacao.avaliacao()
     print([individuo.fitness for individuo in populacao.individuos])
-    while populacao.geracaoAtual <= 5:
-        populacao.novaGeracao()
+    #while populacao.geracaoAtual <= 5:
+    #    populacao.novaGeracao()
 
 if __name__ == "__main__":
     main()
