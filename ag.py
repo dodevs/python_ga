@@ -41,7 +41,7 @@ class Populacao:
 
     def _normalizacao(self, cromossomo):
         valor = int(cromossomo, 2)
-        valorNormalizado = self.dominio[0] + (self.dominio[1] - self.dominio[0]) * (valor / (2 ** self.precisao - 1))
+        valorNormalizado = self.dominio[0] + (self.dominio[1] - self.dominio[0]) * valor / (2 ** self.precisao - 1)
         return valorNormalizado
 
     def _crossover(self, selecionados):
@@ -112,7 +112,7 @@ def main():
     populacao = Populacao(4, [-10,10], fitness, 10)
     populacao.avaliacao()
 
-    while populacao.geracaoAtual <= 10:
+    while populacao.geracaoAtual <= 5:
         populacao.novaGeracao()
         populacao.avaliacao()
 
