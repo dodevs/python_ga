@@ -34,7 +34,7 @@ class Populacao:
     def _gerarIndividuos(self):
         from random import randint
         return [
-            individuo(
+            Individuo(
                 ''.join(map(str, [randint(0,1) for _ in range(self.precisao)])) #Binario
             ) for _ in range(self.qtdIndividuos)
         ]
@@ -45,16 +45,38 @@ class Populacao:
         return valorNormalizado
 
     def _crossover(self, selecionados):
-        pass
+        from random import randint, uniform
+
+        lenS = len(selecionados)
+        filhos = []
+
+        for i in range(lenS):
+            if uniform(0,1) <= 0.6:
+                pai1 = selecionados[i].cromossomo
+                if i == lenS - 1:
+                    pai2 = selecionados[lenS * -1].cromossomo
+                else:
+                    pai2 = selecionados[i+1].cromossomo
+
+                pontoDeCorte = randint(0, self.precisao)
+                novoCromossomo = pai1[pontoDeCorte:] + pai2[:pontoDeCorte]
+                novoFilho = Individuo(novoCromossomo)
+                filhos.append(novoFilho)
+
+        return filhos
+
 
     def _selecao(self):
         from random import choice
 
         selecionados = []
-        while len(selecionados) ≤ 4:
-            desafiante1 = choice(self.indiviudos)
+
+        while len(selecionados) <= 4:
+            desafiante1 = choice(self.individuos)
             desafiante2 = choice(self.individuos)
             selecionados.append(min(desafiante1, desafiante2))
+
+        return selecionados
 
     def avaliacao(self):
         for individuo in self.individuos:
@@ -63,9 +85,12 @@ class Populacao:
 
     def novaGeracao(self):
         selecionados = self._selecao()
+        novaGeracao = self._crossover(selecionados)
+        self.individuos = novaGeracao
+        self.geracaoAtual += 1
 
 
-class individuo:
+class Individuo:
     def __init__(self, cromossomo: str):
         self.cromossomo = cromossomo
         self.fitness = None
@@ -80,19 +105,18 @@ class individuo:
         return self.fitness < value.fitness
 
 
-
 def fitness(x):
     return x ** 2 - 3 * x + 4
-
-def mutacao(x):
-    '{"""}'.format()
 
 def main():
     populacao = Populacao(4, [-10,10], fitness, 10)
     populacao.avaliacao()
-    print([individuo.fitness for individuo in populacao.individuos])
-    #while populacao.geracaoAtual <= 5:
-    #    populacao.novaGeracao()
+
+    while populacao.geracaoAtual <= 10:
+        populacao.novaGeracao()
+        populacao.avaliacao()
+
+    print(min(populacao.individuos).fitness)
 
 if __name__ == "__main__":
     main()
