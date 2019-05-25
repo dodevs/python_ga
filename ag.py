@@ -118,16 +118,26 @@ def fitness(x):
     return x ** 2 - 3 * x + 4
 
 def main():
+    #import matplotlib.pyplot as plt
+    #plot_columns = [] # iteracoes
+    #plot_data = [] # melhor resultado por iteracao
+
     # Parametros: qtdIndividuos, dominio, funcao fitness, precisao, taxa crossover, taxa mutacao
-    populacao = Populacao(4, [-10,10], fitness, 10, 60, 1)
+    populacao = Populacao(40, [-10,10], fitness, 10, 60, 1)
     populacao.avaliacao()
 
-    while populacao.geracaoAtual < 10:
+    while populacao.geracaoAtual < 100:
+        #plot_columns.append(populacao.geracaoAtual)
+        #plot_data.append(min(populacao.individuos).fitness)
         #salvaGeracao(populacao.individuos, populacao.geracaoAtual)
         populacao.novaGeracao()
         populacao.avaliacao()
 
-    print(min(populacao.individuos).fitness)
+    menor = min(populacao.individuos)
+    #plt.plot(plot_columns, plot_data)
+    #plt.ylim(-10, 10)
+    #plt.xticks(plot_columns)
+    #plt.show()
 
 if __name__ == "__main__":
     main()
