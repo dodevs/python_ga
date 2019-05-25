@@ -1,33 +1,11 @@
-'''
-Objetivo: Minimizar f(x)=x²−3x+4
-Critérios
-    Dominio: x∈[−10,+10];
-    Criar uma população inicial com 4 indivíduos;
-    Usar seleção por torneio (n = 2);
-    Aplicar Crossover com taxa de 60% (Crossover de 1 ponto uniforme);
-    Aplicar Mutação com taxa de 1%;
-    Usar 5 gerações e 10 gerações;
-    Normalizacao:
-        x = min + (max-min) * (b10/2l - 10), onde:
-            b10 = binario(cromossomo) na base 10
-            2l = 2 elevado ao numero de bits
-
-1. Gerar a população inicial.
-2. Avaliar cada indivíduo da população.
-3. Enquanto critério de parada não for satisfeito faça
-    3.1  Selecionar os indivíduos mais aptos.
-    3.2  Criar novos indivíduos aplicando os operadores
-        crossover e mutação.
-    3.3  Armazenar os novos indivíduos em umanova população.
-    3.4 Avaliar cada indivíduo da nova população.
-'''
-
 class Populacao:
-    def __init__(self, qtdIndividuos, dominio, fitnessFunc, precisao):
+    def __init__(self, qtdIndividuos, dominio, fitnessFunc, precisao, taxaCrossover, taxaMutacao):
         self.qtdIndividuos = qtdIndividuos
         self.dominio = dominio
         self.precisao = precisao
         self.fitnessFunc = fitnessFunc
+        self.taxaCrossover = taxaCrossover / 100
+        self.taxaMutacao = taxaMutacao / 100
         self.individuos = self._gerarIndividuos()
         self.geracaoAtual = 0
 
@@ -35,14 +13,9 @@ class Populacao:
         from random import randint
         return [
             Individuo(
-                ''.join(map(str, [randint(0,1) for _ in range(self.precisao)])) #Binario
+                [randint(0,1) for _ in range(self.precisao)]
             ) for _ in range(self.qtdIndividuos)
         ]
-
-    def _normalizacao(self, cromossomo):
-        valor = int(cromossomo, 2)
-        valorNormalizado = self.dominio[0] + (self.dominio[1] - self.dominio[0]) * valor / (2 ** self.precisao - 1)
-        return valorNormalizado
 
     def _crossover(self, selecionados):
         from random import randint, uniform
@@ -50,18 +23,28 @@ class Populacao:
         lenS = len(selecionados)
         filhos = []
 
-        for i in range(lenS):
-            if uniform(0,1) <= 0.6:
-                pai1 = selecionados[i].cromossomo
-                if i == lenS - 1:
-                    pai2 = selecionados[lenS * -1].cromossomo
-                else:
-                    pai2 = selecionados[i+1].cromossomo
+        i = 0
+        while i < lenS:
+            pai1 = selecionados[i]
+            if i+1 == lenS:
+                pai2 = selecionados[lenS * -1]
+            else:
+                pai2 = selecionados[i+1]
+
+            if uniform(0,1) <= self.taxaCrossover:
 
                 pontoDeCorte = randint(0, self.precisao)
-                novoCromossomo = pai1[pontoDeCorte:] + pai2[:pontoDeCorte]
-                novoFilho = Individuo(novoCromossomo)
-                filhos.append(novoFilho)
+                novoCromossomo1 = pai1.cromossomo[:pontoDeCorte] + pai2.cromossomo[pontoDeCorte:]
+                novoCromossomo2 = pai2.cromossomo[:pontoDeCorte] + pai1.cromossomo[pontoDeCorte:]
+                filho1 = Individuo(novoCromossomo1)
+                filho2 = Individuo(novoCromossomo2)
+                filhos.append(filho1)
+                filhos.append(filho2)
+
+            else:
+                filhos.append(pai1)
+                filhos.append(pai2)
+            i+= 2
 
         return filhos
 
@@ -71,27 +54,41 @@ class Populacao:
 
         selecionados = []
 
-        while len(selecionados) <= 4:
+        while len(selecionados) < self.qtdIndividuos:
             desafiante1 = choice(self.individuos)
             desafiante2 = choice(self.individuos)
             selecionados.append(min(desafiante1, desafiante2))
 
         return selecionados
 
+
+    def _mutacao(self,selecionados):
+        from random import uniform
+
+        for individuo in selecionados:
+            for i in range(self.precisao):
+                if(uniform(0,1) <= self.taxaMutacao):
+                    individuo.cromossomo[i] = int(not individuo.cromossomo[i])
+
+    def _normalizacao(self, cromossomo):
+        valorNormalizado = (self.dominio[0] + (self.dominio[1] - self.dominio[0])) * cromossomo / (2 ** self.precisao - 1)
+        return valorNormalizado
+
     def avaliacao(self):
         for individuo in self.individuos:
-            valorNormalizado = self._normalizacao(individuo.cromossomo)
+            valorNormalizado = self._normalizacao(individuo.cromossomo_int())
             individuo.fitness = self.fitnessFunc(valorNormalizado)
 
     def novaGeracao(self):
         selecionados = self._selecao()
         novaGeracao = self._crossover(selecionados)
+        self._mutacao(novaGeracao)
         self.individuos = novaGeracao
         self.geracaoAtual += 1
 
 
 class Individuo:
-    def __init__(self, cromossomo: str):
+    def __init__(self, cromossomo):
         self.cromossomo = cromossomo
         self.fitness = None
 
@@ -104,15 +101,29 @@ class Individuo:
     def __lt__(self, value):
         return self.fitness < value.fitness
 
+    def cromossomo_str(self):
+        return ''.join(map(str, self.cromossomo))
+
+    def cromossomo_int(self):
+        return int(self.cromossomo_str(), 2)
+
+def salvaGeracao(individuos, geracao):
+    file = open("resultados/geracao_{0}.txt".format(geracao), "a+")
+    for individuo in individuos:
+        file.write("{0}\n".format(individuo.fitness))
+
+    file.close()
 
 def fitness(x):
     return x ** 2 - 3 * x + 4
 
 def main():
-    populacao = Populacao(4, [-10,10], fitness, 10)
+    # Parametros: qtdIndividuos, dominio, funcao fitness, precisao, taxa crossover, taxa mutacao
+    populacao = Populacao(4, [-10,10], fitness, 10, 60, 1)
     populacao.avaliacao()
 
-    while populacao.geracaoAtual <= 5:
+    while populacao.geracaoAtual < 10:
+        #salvaGeracao(populacao.individuos, populacao.geracaoAtual)
         populacao.novaGeracao()
         populacao.avaliacao()
 
