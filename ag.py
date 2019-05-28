@@ -155,7 +155,11 @@ def main():
     plt.ylabel('Fitness')
     media_line, = plt.plot(plot_x, plot_y_media, color='y')
     best_line, = plt.plot(plot_x, plot_y_melhor, color='g')
-    plt.legend([media_line, best_line], ['Média', 'Melhor'])
+    plt.legend([media_line, best_line], ['Média; Ultima geração: {0}'.format(plot_y_media[-1]), 'Melhor; Ultima geração: {0}'.format(plot_y_melhor[-1])])
+
+    #plt.text(plot_x[-1], plot_y_melhor[-1], 'Melhor fitness: {}'.format(plot_y_melhor[-1]), horizontalalignment='right')
+    #plt.text(plot_x[-1], plot_y_media[-1], 'Media fitness: {}'.format(plot_y_media[-1]), horizontalalignment='left')
+
     #plt.ylim(-10, 10)
     plt.xticks(plot_x)
     plt.show()
