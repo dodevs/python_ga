@@ -107,6 +107,13 @@ class Individuo:
     def cromossomo_int(self):
         return int(self.cromossomo_str(), 2)
 
+def mediaIndividuos(individuos, qtdIndividuos):
+    soma_fitness = 0
+    for individuo in individuos:
+        soma_fitness += individuo.fitness
+
+    return soma_fitness/qtdIndividuos
+
 def salvaGeracao(individuos, geracao):
     file = open("resultados/geracao_{0}.txt".format(geracao), "a+")
     for individuo in individuos:
@@ -118,26 +125,40 @@ def fitness(x):
     return x ** 2 - 3 * x + 4
 
 def main():
-    #import matplotlib.pyplot as plt
-    #plot_columns = [] # iteracoes
-    #plot_data = [] # melhor resultado por iteracao
+    import matplotlib.pyplot as plt
+    from functools import reduce
+
+    plot_y_media = []
+    plot_y_melhor = []
+    plot_x = [] # iteracao
 
     # Parametros: qtdIndividuos, dominio, funcao fitness, precisao, taxa crossover, taxa mutacao
-    populacao = Populacao(40, [-10,10], fitness, 10, 60, 1)
+    populacao = Populacao(4, [-10,10], fitness, 10, 60, 1)
     populacao.avaliacao()
 
-    while populacao.geracaoAtual < 100:
-        #plot_columns.append(populacao.geracaoAtual)
-        #plot_data.append(min(populacao.individuos).fitness)
+    while populacao.geracaoAtual < 10:
+        # PyPlot data
+        plot_x.append(populacao.geracaoAtual)
+        plot_y_media.append(mediaIndividuos(populacao.individuos, populacao.qtdIndividuos))
+        plot_y_melhor.append(min(populacao.individuos).fitness)
+
         #salvaGeracao(populacao.individuos, populacao.geracaoAtual)
+
+        # Ciclo do algoritmo
         populacao.novaGeracao()
         populacao.avaliacao()
 
-    menor = min(populacao.individuos)
-    #plt.plot(plot_columns, plot_data)
+
+    # PyPloat Config
+    plt.title('Algoritmo Genético')
+    plt.xlabel('Gerações')
+    plt.ylabel('Fitness')
+    media_line, = plt.plot(plot_x, plot_y_media, color='y')
+    best_line, = plt.plot(plot_x, plot_y_melhor, color='g')
+    plt.legend([media_line, best_line], ['Média', 'Melhor'])
     #plt.ylim(-10, 10)
-    #plt.xticks(plot_columns)
-    #plt.show()
+    plt.xticks(plot_x)
+    plt.show()
 
 if __name__ == "__main__":
     main()
