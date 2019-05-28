@@ -7,11 +7,12 @@ def plotaResultados(numeroExecucoes, qtdGeracoes, qtdIndividuos):
 
     for execucao in range(numeroExecucoes):
         media_execucao = 0
-        menor_execucao = float('inf')
+        menor_execucao = float('inf') #Valor infinito
 
         for geracao in range(qtdGeracoes):
             soma_geracao = 0
             menor_geracao = float('inf')
+            
             file = open("resultados/{0}_{1}_{2}.txt".format(execucao, geracao, qtdIndividuos), 'r')
             fitness = file.readline()
             while fitness != "":
