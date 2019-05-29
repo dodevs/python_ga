@@ -42,14 +42,13 @@ class Populacao:
                 filhos.append(filho2)
 
             else:
-                filhos.append(pai1)
-                filhos.append(pai2)
+                filhos.append(Individuo(pai1.cromossomo))
+                filhos.append(Individuo(pai2.cromossomo))
 
             i+= 2
 
         #self._elitismo(selecionados, filhos)
         return filhos
-
 
     def _selecao(self):
         from random import choice
@@ -62,7 +61,6 @@ class Populacao:
             selecionados.append(min(desafiante1, desafiante2))
 
         return selecionados
-
 
     def _mutacao(self,selecionados):
         from random import uniform
@@ -93,6 +91,7 @@ class Populacao:
         self._mutacao(novaGeracao)
         self.individuos = novaGeracao
         self.geracaoAtual += 1
+        return min(selecionados)
 
 
 class Individuo:
