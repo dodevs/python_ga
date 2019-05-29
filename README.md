@@ -7,7 +7,7 @@ Use um virtualenv ou uma instalação padrão do python
 
 Instale as dependencias
 
-> pip install -r requeriments
+> pip install -r requeriments.txt
 
 ## Uso
 
