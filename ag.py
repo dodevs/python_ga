@@ -5,10 +5,6 @@ def fitness(x):
     return x ** 2 - 3 * x + 4
 
 def main():
-    import matplotlib.pyplot as plt
-    from time import sleep
-    from functools import reduce
-
     numero_execucoes = 10
     numero_geracoes = 10
 
