@@ -21,8 +21,13 @@ def main():
             salvaResultado(execucao, populacao.geracaoAtual, populacao.individuos)
 
             # Ciclo do algoritmo
+            #menorDaSelecao = populacao.novaGeracao() #elitismo?
             populacao.novaGeracao()
             populacao.avaliacao()
+
+            #piorDaNovaGeracao = max(populacao.individuos)
+            #if piorDaNovaGeracao > menorDaSelecao:
+            #    populacao.individuos[populacao.individuos.index(piorDaNovaGeracao)] = menorDaSelecao
 
     plotaResultados(numero_execucoes, numero_geracoes, populacao.qtdIndividuos)
 
