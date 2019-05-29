@@ -13,4 +13,6 @@ Instale as dependencias
 
 Modifique o algoritmo conforme necessidade
 
+Crie uma pasta com nome resultados na raiz do projeto
+
 > python ag.py
