@@ -29,6 +29,7 @@ def plotaResultados(numeroExecucoes, qtdGeracoes, qtdIndividuos):
                 fitness = file.readline()
             
             #media_execucao += soma_geracao/qtdGeracoes
+            file.close()
 
             if menor_geracao < menor_execucao:
                 menor_execucao = menor_geracao
