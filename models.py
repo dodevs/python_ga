@@ -70,12 +70,6 @@ class Populacao:
                 if(uniform(0,1) <= self.taxaMutacao):
                     individuo.cromossomo[i] = int(not individuo.cromossomo[i])
 
-    def _elitismo(self, selecionados, filhos):
-        if(min(selecionados) < min(filhos)):
-            for i in range(len(filhos)):
-                if(filhos[i] == max(filhos)):
-                    filhos[i] = min(selecionados)
-
     def _normalizacao(self, cromossomo):
         valorNormalizado = (self.dominio[0] + (self.dominio[1] - self.dominio[0])) * cromossomo / (2 ** self.precisao - 1)
         return valorNormalizado

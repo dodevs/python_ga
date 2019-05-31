@@ -6,7 +6,7 @@ def fitness(x):
 
 def main():
     numero_execucoes = 10
-    numero_geracoes = 10
+    numero_geracoes = 5
 
     for execucao in range(numero_execucoes):
         # Parametros: qtdIndividuos, dominio, funcao fitness, precisao, taxa crossover, taxa mutacao
@@ -17,13 +17,8 @@ def main():
             salvaResultado(execucao, populacao.geracaoAtual, populacao.individuos)
 
             # Ciclo do algoritmo
-            #menorDaSelecao = populacao.novaGeracao() #elitismo?
             populacao.novaGeracao()
             populacao.avaliacao()
-
-            #piorDaNovaGeracao = max(populacao.individuos)
-            #if piorDaNovaGeracao > menorDaSelecao:
-            #    populacao.individuos[populacao.individuos.index(piorDaNovaGeracao)] = menorDaSelecao
 
     plotaResultados(numero_execucoes, numero_geracoes, populacao.qtdIndividuos)
 
