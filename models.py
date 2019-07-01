@@ -1,3 +1,8 @@
+'''
+    fazer mudanças nos modelos para que funcionem com numeros reais
+'''
+
+
 class Populacao:
     def __init__(self, qtdIndividuos, dominio, fitnessFunc, precisao, taxaCrossover, taxaMutacao):
         self.qtdIndividuos = qtdIndividuos
