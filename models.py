@@ -16,11 +16,8 @@ class Populacao:
 
     def _gerarIndividuos(self):
         from random import randint
-        return [
-            Individuo(
-                [randint(0,1) for _ in range(self.precisao)]
-            ) for _ in range(self.qtdIndividuos)
-        ]
+        from random import uniform
+        return [Individuo(uniform(self.dominio[0], self.dominio[1])) for _ in range(self.qtdIndividuos)]
 
     def _crossover(self, selecionados):
         from random import randint, uniform
