@@ -10,7 +10,7 @@ def main():
 
     for execucao in range(numero_execucoes):
         # Parametros: qtdIndividuos, dominio, funcao fitness, precisao, taxa crossover, taxa mutacao
-        populacao = Populacao(4, [-10,10], fitness, 100000, 60, 10)
+        populacao = Populacao(5000, [-10,10], fitness, 10, 60, 10)
         populacao.avaliacao()
 
         while populacao.geracaoAtual < numero_geracoes:
