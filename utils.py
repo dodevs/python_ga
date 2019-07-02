@@ -39,7 +39,7 @@ def plotaResultados(numeroExecucoes, qtdGeracoes, qtdIndividuos):
             menor_execucoes[0] = execucao
 
     # PyPloat Config
-    plt.title('Algoritmo Genético')
+    plt.title('Algoritmo Genético Real')
     plt.xlabel('Execucão')
     plt.ylabel('Fitness')
     best_line, = plt.plot(plot_x, plot_y_melhor, color='g')
