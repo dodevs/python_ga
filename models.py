@@ -69,6 +69,7 @@ class Populacao:
         return selecionados
 
     # Mutação de Limite
+    # Para a mutação gaussiana, o desvio padrao pode ser entre 1% e 10% do limite
     def _mutacao(self,selecionados):
         from random import uniform
 
@@ -97,11 +98,26 @@ class Individuo:
         self.cromossomo = cromossomo
         self.fitness = None
 
+    # Igual overload
     def __eq__(self, value):
         return self.fitness == value.fitness
 
+    # Menor ou maior overload
     def __le__(self, value):
         return self.fitness <= value.fitness
 
+    # Menor overload
     def __lt__(self, value):
         return self.fitness < value.fitness
+
+    # Soma overload
+    def __add__(self, value):
+        return self.fitness + value.fitness
+
+    # Reverse add overload, chamado quando: 0.__add__(Object), o tipo int nao 
+    # conhece o Objeto, entao tenta a operação reversa Object.__radd__(0)
+    def __radd__(self, other):
+        if other is not Individuo:
+            return self
+        else:
+            return self.__add__(other)
