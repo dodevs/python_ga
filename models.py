@@ -4,21 +4,22 @@
 
 
 class Populacao:
-    def __init__(self, qtdIndividuos, dominio, fitnessFunc, precisao, taxaCrossover, taxaMutacao):
+    def __init__(self, qtdIndividuos, dominio, fitnessFunc, taxaCrossover, taxaMutacao, keep_blx_beta=True, blx_alpha=0.5):
         self.qtdIndividuos = qtdIndividuos
         self.dominio = dominio
-        self.precisao = precisao
         self.fitnessFunc = fitnessFunc
         self.taxaCrossover = taxaCrossover / 100
         self.taxaMutacao = taxaMutacao / 100
         self.individuos = self._gerarIndividuos()
         self.geracaoAtual = 0
+        self.blx_alpha = blx_alpha
+        self.keep_blx_beta = keep_blx_beta
 
     def _gerarIndividuos(self):
-        from random import randint
         from random import uniform
         return [Individuo(uniform(self.dominio[0], self.dominio[1])) for _ in range(self.qtdIndividuos)]
 
+    # Blend Crossover (BLX-α)
     def _crossover(self, selecionados):
         from random import randint, uniform
 
@@ -34,10 +35,13 @@ class Populacao:
                 pai2 = selecionados[i+1]
 
             if uniform(0,1) <= self.taxaCrossover:
+                blx_beta = uniform((-1 * self.blx_alpha), (1 + self.blx_alpha))
+                novoCromossomo1 = pai1.cromossomo + blx_beta * (pai2.cromossomo - pai1.cromossomo)
 
-                pontoDeCorte = randint(0, self.precisao)
-                novoCromossomo1 = pai1.cromossomo[:pontoDeCorte] + pai2.cromossomo[pontoDeCorte:]
-                novoCromossomo2 = pai2.cromossomo[:pontoDeCorte] + pai1.cromossomo[pontoDeCorte:]
+                if(not self.keep_blx_beta):
+                    blx_beta = uniform((-1 * self.blx_alpha), (1 + self.blx_alpha))
+
+                novoCromossomo2 = pai2.cromossomo + blx_beta * (pai1.cromossomo - pai2.cromossomo)
                 filho1 = Individuo(novoCromossomo1)
                 filho2 = Individuo(novoCromossomo2)
                 filhos.append(filho1)
@@ -64,22 +68,20 @@ class Populacao:
 
         return selecionados
 
+    # Mutação de Limite
     def _mutacao(self,selecionados):
         from random import uniform
 
         for individuo in selecionados:
-            for i in range(self.precisao):
-                if(uniform(0,1) <= self.taxaMutacao):
-                    individuo.cromossomo[i] = int(not individuo.cromossomo[i])
-
-    def _normalizacao(self, cromossomo):
-        valorNormalizado = (self.dominio[0] + (self.dominio[1] - self.dominio[0])) * cromossomo / (2 ** self.precisao - 1)
-        return valorNormalizado
+            if(uniform(0,1) <= self.taxaMutacao):
+                if (uniform(0,1) < 0.5):
+                    individuo.cromossomo = self.dominio[0]
+                else:
+                    individuo.cromossomo = self.dominio[1]
 
     def avaliacao(self):
         for individuo in self.individuos:
-            valorNormalizado = self._normalizacao(individuo.cromossomo_int())
-            individuo.fitness = self.fitnessFunc(valorNormalizado)
+            individuo.fitness = self.fitnessFunc(individuo.cromossomo)
 
     def novaGeracao(self):
         selecionados = self._selecao()
@@ -103,9 +105,3 @@ class Individuo:
 
     def __lt__(self, value):
         return self.fitness < value.fitness
-
-    def cromossomo_str(self):
-        return ''.join(map(str, self.cromossomo))
-
-    def cromossomo_int(self):
-        return int(self.cromossomo_str(), 2)
