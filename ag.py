@@ -15,11 +15,11 @@ def main():
     for execucao in range(numero_execucoes):
         # Parametros: qtdIndividuos, dominio, funcao fitness, precisao, taxa crossover, taxa mutacao
         populacao = Populacao(
-            qtdIndividuos=100000,
+            qtdIndividuos=5000,
             dominio=[-10,10],
             fitnessFunc=fitness,
             taxaCrossover=60,
-            taxaMutacao=1,
+            taxaMutacao=10,
             keep_blx_beta=True, # Se True, mantém o mesmo valor de Beta para todos filhos de um crossover
             blx_alpha=0.5 # Se keep_blx_beta == True, aumenta a região de possiveis filhos ao redor do pai
         )
