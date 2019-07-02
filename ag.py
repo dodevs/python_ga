@@ -8,14 +8,14 @@ def fitness(x):
 
 def main():
     numero_execucoes = 1
-    numero_geracoes = 5
+    numero_geracoes = 50
 
     medias_geracao = []
 
     for execucao in range(numero_execucoes):
         # Parametros: qtdIndividuos, dominio, funcao fitness, precisao, taxa crossover, taxa mutacao
         populacao = Populacao(
-            qtdIndividuos=4,
+            qtdIndividuos=100000,
             dominio=[-10,10],
             fitnessFunc=fitness,
             taxaCrossover=60,
@@ -27,16 +27,16 @@ def main():
 
         while populacao.geracaoAtual < numero_geracoes:
             #salvaResultado(execucao, populacao.geracaoAtual, populacao.individuos)
-            medias_geracao.append(
+            '''medias_geracao.append(
                 #mediaIndividuos(populacao.individuos, populacao.qtdIndividuos)
                 reduce(add, populacao.individuos) / populacao.qtdIndividuos
-            )
+            )'''
             # Ciclo do algoritmo
             populacao.novaGeracao()
             populacao.avaliacao()
 
     #plotaResultados(numero_execucoes, numero_geracoes, populacao.qtdIndividuos)
-    print(medias_geracao)
+    #print(medias_geracao)
 
 if __name__ == "__main__":
     main()
